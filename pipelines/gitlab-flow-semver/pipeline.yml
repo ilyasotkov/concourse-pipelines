@@ -1,0 +1,303 @@
+groups:
+- name: master
+  jobs:
+  - version-master
+  - tag-master
+  - build-master
+  - release-master
+
+- name: production
+  jobs:
+  - merge-master-to-production
+  - version-production
+  - tag-production
+  - build-production
+  - release-production
+
+- name: bump-version
+  jobs:
+  - patch
+  - minor
+  - major
+  - rc
+
+resource_types:
+- name: helm
+  type: docker-image
+  source:
+    repository: linkyard/concourse-helm-resource
+
+resources:
+- name: pipelines
+  type: git
+  source:
+    uri: https://github.com/ilyasotkov/concourse-pipelines.git
+    branch: master
+
+- name: repo-master
+  type: git
+  source:
+    uri: ((git_repo.uri))
+    private_key: ((git_repo.private_key))
+    branch: master
+
+- name: repo-production
+  type: git
+  source:
+    uri: ((git_repo.uri))
+    private_key: ((git_repo.private_key))
+    branch: production
+
+- name: rc-version
+  type: semver
+  source:
+    driver: git
+    uri: ((git_repo.uri))
+    private_key: ((git_repo.private_key))
+    branch: rc-version
+    file: version
+
+- name: final-version
+  type: semver
+  source:
+    driver: git
+    uri: ((git_repo.uri))
+    private_key: ((git_repo.private_key))
+    branch: final-version
+    file: version
+
+- name: docker-image
+  type: docker-image
+  source:
+    repository: ((docker_registry.uri))
+    username: ((docker_registry.username))
+    password: ((docker_registry.password))
+
+- name: helm-release
+  type: helm
+  source:
+    cluster_url: https://((kube_cluster.uri))
+    cluster_ca: ((kube_cluster.ca))
+    token: ((kube_cluster.token))
+    repos:
+    - name: private
+      url: https://((chart_repo.username)):((chart_repo.password))@((chart_repo.uri))
+
+jobs:
+# ------------------------------------------------------------------------------
+# Master branch jobs (released to staging)
+# ------------------------------------------------------------------------------
+- name: version-master
+  serial: true
+  serial_groups: [ update-version ]
+  plan:
+  - aggregate:
+    - get: master
+      resource: repo-master
+      # uncomment this line after you add the pipeline to your new concourse server
+      # trigger: true
+    - get: rc-version
+  - put: rc-version
+    params:
+      pre: rc
+
+- name: tag-master
+  serial: true
+  plan:
+  - aggregate:
+    - get: master
+      resource: repo-master
+      passed: [ version-master ]
+      trigger: true
+    - get: rc-version
+      passed: [ version-master ]
+  - put: master
+    resource: repo-master
+    params:
+      repository: master
+      tag: rc-version/version
+
+- name: build-master
+  serial: true
+  plan:
+  - aggregate:
+    - get: master
+      resource: repo-master
+      trigger: true
+      passed: [ version-master ]
+    - get: rc-version
+      passed: [ version-master ]
+  - put: docker-image
+    params:
+      build: master
+      tag: rc-version/version
+      cache: false
+      tag_as_latest: true
+      # uncomment these lines after initial image build and push
+      # cache: true
+      # cache_tag: latest
+
+- name: release-master
+  serial: true
+  plan:
+  - aggregate:
+    - get: pipelines
+    - get: repo-master
+      trigger: true
+      passed: [ build-master ]
+    - get: rc-version
+  - put: helm-release
+    params:
+      chart: private/((chart_repo.chart))
+      release: repo-master/((master_release.name))
+      values: repo-master/((master_release.values))
+      replace: true
+      devel: true
+      recreate_pods: false
+      wait_until_ready: 500
+      override_values:
+      - key: image.repository
+        value: ((docker_registry.uri))
+      - key: image.pullSecret
+        value: registry-dockercfg
+      - key: image.tag
+        path: rc-version/version
+
+# ------------------------------------------------------------------------------
+# Production branch jobs (released to production)
+# ------------------------------------------------------------------------------
+- name: merge-master-to-production
+  serial: true
+  plan:
+  - aggregate:
+    - get: pipelines
+    - get: master
+      resource: repo-master
+      # trigger: true
+      # passed: [ release-master ]
+    - get: production
+      resource: repo-production
+  - task: merge-master-to-production
+    file: pipelines/gitlab-flow-basic/tasks/merge-branch.yml
+    input_mapping:
+      pipelines: pipelines
+      from: master
+      to: production
+    output_mapping:
+      out: next-production
+    params:
+      GIT_EMAIL: concourse@ci.swarm.pw
+      GIT_NAME: concourse
+      NO_FF: true
+  - put: production
+    resource: repo-production
+    params:
+      repository: next-production
+
+- name: version-production
+  serial: true
+  plan:
+    - aggregate:
+      - get: production
+        resource: repo-production
+        passed: [ merge-master-to-production ]
+        trigger: true
+      - get: rc-version
+        params:
+          bump: final
+    - put: final-version
+      params:
+        file: rc-version/version
+
+- name: tag-production
+  serial: true
+  plan:
+  - aggregate:
+    - get: production
+      resource: repo-production
+      passed: [ version-production ]
+      trigger: true
+    - get: final-version
+      passed: [ version-production ]
+  - put: production
+    resource: repo-production
+    params:
+      repository: production
+      tag: final-version/version
+
+- name: build-production
+  serial: true
+  plan:
+  - aggregate:
+    - get: production
+      resource: repo-production
+      trigger: true
+      passed: [ version-production ]
+    - get: rc-version
+    - get: final-version
+  - put: docker-image
+    params:
+      build: production
+      tag: final-version/version
+      cache: true
+      cache_tag: latest
+
+- name: release-production
+  serial: true
+  plan:
+  - aggregate:
+    - get: repo-production
+      trigger: true
+      passed: [ build-production ]
+    - get: final-version
+  - put: helm-release
+    params:
+      chart: private/((chart_repo.chart))
+      release: repo-production/((production_release.name))
+      values: repo-production/((production_release.values))
+      replace: true
+      devel: true
+      recreate_pods: false
+      wait_until_ready: 500
+      override_values:
+      - key: image.pullSecret
+        value: registry-dockercfg
+      - key: image.tag
+        path: final-version/version
+      - key: image.repository
+        value: ((docker_registry.uri))
+
+# ------------------------------------------------------------------------------
+# SemVer version bumps. Must be triggered manually!
+# ------------------------------------------------------------------------------
+- name: patch
+  serial: true
+  serial_groups: [ update-version ]
+  plan:
+    - get: rc-version
+    - put: rc-version
+      params: { bump: patch }
+      passed:
+- name: minor
+  serial: true
+  serial_groups: [ update-version ]
+  plan:
+    - get: rc-version
+    - put: rc-version
+      params: { bump: minor }
+
+- name: major
+  serial: true
+  serial_groups: [ update-version ]
+  plan:
+    - get: rc-version
+    - put: rc-version
+      params: { bump: major }
+
+- name: rc
+  serial: true
+  serial_groups: [ update-version ]
+  plan:
+    - get: rc-version
+    - put: rc-version
+      params: { pre: rc }
