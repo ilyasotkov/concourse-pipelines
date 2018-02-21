@@ -28,7 +28,7 @@ resource_types:
     repository: linkyard/concourse-helm-resource
 
 resources:
-- name: pipelines
+- name: concource-pipelines-repo
   type: git
   source:
     uri: https://github.com/ilyasotkov/concourse-pipelines.git
@@ -95,7 +95,7 @@ jobs:
     - get: master
       resource: repo-master
       # uncomment this line after you add the pipeline to your new concourse server
-      # trigger: true
+      trigger: true
     - get: rc-version
   - put: rc-version
     params:
@@ -123,7 +123,7 @@ jobs:
   - aggregate:
     - get: master
       resource: repo-master
-      trigger: true
+      # trigger: true
       passed: [ version-master ]
     - get: rc-version
       passed: [ version-master ]
@@ -141,7 +141,7 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - get: pipelines
+    - get: concource-pipelines-repo
     - get: repo-master
       trigger: true
       passed: [ build-master ]
@@ -170,7 +170,7 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - get: pipelines
+    - get: concource-pipelines-repo
     - get: master
       resource: repo-master
       # trigger: true
@@ -178,9 +178,9 @@ jobs:
     - get: production
       resource: repo-production
   - task: merge-master-to-production
-    file: pipelines/gitlab-flow-basic/tasks/merge-branch.yml
+    file: concource-pipelines-repo/tasks/merge-branch.yml
     input_mapping:
-      pipelines: pipelines
+      pipelines: concource-pipelines-repo
       from: master
       to: production
     output_mapping:

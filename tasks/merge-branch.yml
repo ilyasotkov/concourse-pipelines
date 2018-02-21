@@ -5,7 +5,7 @@ image_resource:
   source:
     repository: getourneau/alpine-bash-git
 inputs:
-  - name: pipelines
+  - name: concource-pipelines-repo
   - name: from
     path: repo-target
   - name: to
@@ -15,4 +15,4 @@ outputs:
 run:
   path: /bin/bash
   args:
-    - pipelines/tasks/merge-branch.sh
+    - concource-pipelines-repo/tasks/merge-branch.sh
