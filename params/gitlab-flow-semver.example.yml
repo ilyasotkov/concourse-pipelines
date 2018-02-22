@@ -40,9 +40,42 @@ chart_repo:
   password: GzJRsGYKyuLPomgQ5DB
   chart: rails-app
 
-kube_cluster:
-  uri: 109.233.91.193
-  ca: |
-    LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURDekNDQWZPZ0F3SUJBZ0lRQnRXeDVDc1BUa04rTlIxRDh0bldLREFOQmdrcWhraUc5dzBCQVFzRkFEQXYKTVMwd0t3WURWUVFERXlSbVlXTTFaalptTXkwNE9UUTBMVFJpWVdNdFlXSTRZeTB4TVdKa1ltRXpPR0UyWldJdwpIaGNOTVRnd01qSXhNRGMwTVRVNVdoY05Nak13TWpJd01EZzBNVFU1V2pBdk1TMHdLd1lEVlFRREV5Um1ZV00xClpqWm1NeTA0T1RRMExUUmlZV010WVdJNFl5MHhNV0prWW1Fek9HRTJaV0l3Z2dFaU1BMEdDU3FHU0liM0RRRUIKQVFVQUE0SUJEd0F3Z2dFS0FvSUJBUUMvOGd5eEVQVUQxeVJsZ2VadE41MjV2SWVPSVB5aUI2djc4M0szdkwrbApVM1RUYklBMkhVZDBYSHR2UFNwNEVzaU9MSmhEWlNiWDVvdktxeExCbHlUamdubktjY0RiRTZqSU9aMXJtM0hnCjlTSjlibVp6R0RNTU9oYmV0YUNHZGkyMU9ZL3RoNjgzYmVwUTJTNHhmYnVpeE50SVQ3akVLLzRXZnk4VU5VL3MKR3NKNGp1dTlUMjJPUXFvY3FCT243QVozcWNUR2h0eFl3L2kwNHZnRXhOZXhCWUVsR2hBMG5HZEVHcHpPZ2djVApwMEptUXhaMHlJMjg0cUpKRFdLaUNYTUNFQUgrdlhkWlJOQVFuaGh6emJaSzBpNCtZdmRTeHVKTm5rY0V1OGpKCkNCQmtyTUVLeUNsd0wvMXhCWmc1d1ZHd001ZTZRNnhIQWV4REpORWZTSGRSQWdNQkFBR2pJekFoTUE0R0ExVWQKRHdFQi93UUVBd0lDQkRBUEJnTlZIUk1CQWY4RUJUQURBUUgvTUEwR0NTcUdTSWIzRFFFQkN3VUFBNElCQVFCSgpXVFJpcEpyN3h4VlVYY2QwOHFMN2pvL1ljMVFMMk0vMS84NEhjVDN6dmI0OE5xREU3Umh0V0xTSzd1anUyRjEzCnBYWWNvNUo1WHoyWEI4QVErVjhWcndHVU1iQW9SdmlKZ0lCR0xOUWJiWTQwYnp3VXZDbDh0VTZwYWZTTjY0UncKUDJ1bk1KdVc0UTZ2eFlMRlJWVnMrMHRJc1F5RmdUOTc1SnRTNW1vVkQxK1BJQmdJS2d3NVZpZXRFRWxWRURxWgoyOHNIRmZ6TG9lbEdZQmxvYVpySTJST2FRcGVJa1hFM1BybVBydUppTTFmemlLbGFuRGEvdmJ0TmVYZTk2WnhzCnNjaEduL3VHRHNmcnJmVVhZbTg3bXR2UzFzUHN4ZS9PSlM0dzFKSUwrYjlwRTlMK21sTjRHOG9YT01oNG03SUwKOGFLWVZpTU9wcVdleE9yRlh6RXIKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
-  token: |
-    ya29.c.El9pBSwF0tQwOq4MZgpR_ufq3ZDLM1zF1PhZz2fiuW8qB2zImPoJLIOgfkvQO5CaHnhBGJTkkW870HqovPuxbugwQlJAuclsTGo2rng0z93_-yIjcS5WbWXyKPNKdf9KOg
+kube_config: |
+  apiVersion: v1
+  clusters:
+  - cluster:
+      certificate-authority: fake-ca-file
+      server: https://1.2.3.4
+    name: development
+  - cluster:
+      insecure-skip-tls-verify: true
+      server: https://5.6.7.8
+    name: scratch
+  contexts:
+  - context:
+      cluster: development
+      namespace: frontend
+      user: developer
+    name: dev-frontend
+  - context:
+      cluster: development
+      namespace: storage
+      user: developer
+    name: dev-storage
+  - context:
+      cluster: scratch
+      namespace: default
+      user: experimenter
+    name: exp-scratch
+  current-context: ""
+  kind: Config
+  preferences: {}
+  users:
+  - name: developer
+    user:
+      client-certificate: fake-cert-file
+      client-key: fake-key-file
+  - name: experimenter
+    user:
+      password: some-password
+      username: exp
