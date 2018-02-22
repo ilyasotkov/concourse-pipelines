@@ -93,8 +93,7 @@ jobs:
   serial_groups: [ update-version ]
   plan:
   - aggregate:
-    - get: master
-      resource: repo-master
+    - get: repo-master
       # uncomment this line after you add the pipeline to your new concourse server
       trigger: true
     - get: rc-version
@@ -106,35 +105,32 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - get: master
-      resource: repo-master
+    - get: repo-master
       passed: [ version-master ]
       trigger: true
     - get: rc-version
       passed: [ version-master ]
-  - put: master
-    resource: repo-master
+  - put: repo-master
     params:
-      repository: master
+      repository: repo-master
       tag: rc-version/version
 
 - name: build-master
   serial: true
   plan:
   - aggregate:
-    - get: master
-      resource: repo-master
+    - get: repo-master
       passed: [ version-master ]
       trigger: true
     - get: rc-version
       passed: [ version-master ]
   - put: docker-image
     params:
-      build: master
+      build: repo-master
       tag: rc-version/version
       tag_as_latest: true
       # uncomment these two lines after initial image build and push
-      # cache: false
+      # cache: true
       # cache_tag: latest
 
 - name: release-master
@@ -171,26 +167,23 @@ jobs:
   plan:
   - aggregate:
     - get: concource-pipelines-repo
-    - get: master
-      resource: repo-master
+    - get: repo-master
       # trigger: true
       # passed: [ release-master ]
-    - get: production
-      resource: repo-production
+    - get: repo-production
   - task: merge-master-to-production
     file: concource-pipelines-repo/tasks/merge-branch.yml
     input_mapping:
       pipelines: concource-pipelines-repo
-      from: master
-      to: production
+      from: repo-master
+      to: repo-production
     output_mapping:
       out: next-production
     params:
       GIT_EMAIL: concourse@ci.swarm.pw
       GIT_NAME: concourse
       NO_FF: true
-  - put: production
-    resource: repo-production
+  - put: repo-production
     params:
       repository: next-production
 
@@ -198,8 +191,7 @@ jobs:
   serial: true
   plan:
     - aggregate:
-      - get: production
-        resource: repo-production
+      - get: repo-production
         trigger: true
         passed: [ merge-master-to-production ]
       - get: rc-version
@@ -213,31 +205,28 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - get: production
-      resource: repo-production
+    - get: repo-production
       passed: [ version-production ]
       trigger: true
     - get: final-version
       passed: [ version-production ]
-  - put: production
-    resource: repo-production
+  - put: repo-production
     params:
-      repository: production
+      repository: repo-production
       tag: final-version/version
 
 - name: build-production
   serial: true
   plan:
   - aggregate:
-    - get: production
-      resource: repo-production
+    - get: repo-production
       passed: [ version-production ]
       trigger: true
     - get: rc-version
     - get: final-version
   - put: docker-image
     params:
-      build: production
+      build: repo-production
       tag: final-version/version
       cache: true
       cache_tag: latest
