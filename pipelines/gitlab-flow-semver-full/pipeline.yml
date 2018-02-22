@@ -5,6 +5,7 @@ groups:
 
 - name: master
   jobs:
+  - test-master
   - version-master
   - tag-master
   - build-master

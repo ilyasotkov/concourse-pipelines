@@ -19,6 +19,7 @@ Example parameters can be found in [params/gitlab-flow-semver.example.yml](/para
 ### rails-react-boilerplate-pipeline
 
 #### Set (apply) pipeline
+
 ```sh
 fly --target ci \
         set-pipeline \
@@ -81,4 +82,25 @@ fly --target ci \
         trigger-job \
         --job rails-react-boilerplate-pipeline/major \
         --watch
+```
+
+### rails-react-boilerplate-pipeline-full
+
+#### Set (apply) pipeline
+
+```sh
+fly --target ci \
+        set-pipeline \
+        --pipeline rails-react-boilerplate-pipeline-full \
+        --config pipelines/gitlab-flow-semver-full/pipeline.yml \
+        --load-vars-from params/rails-react-boilerplate-full.yml \
+        --var "kube_config=$(cat ../exekube-alpha/config/kube/config)"
+```
+
+#### Destroy pipeline
+
+```sh
+fly --target ci \
+        destroy-pipeline \
+        --pipeline rails-react-boilerplate-pipeline-full
 ```
