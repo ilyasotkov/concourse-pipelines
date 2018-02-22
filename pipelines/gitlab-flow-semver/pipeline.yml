@@ -95,7 +95,7 @@ jobs:
     - get: master
       resource: repo-master
       # uncomment this line after you add the pipeline to your new concourse server
-      # trigger: true
+      trigger: true
     - get: rc-version
   - put: rc-version
     params:
@@ -134,8 +134,6 @@ jobs:
       # cache: false
       # tag_as_latest: true
       # uncomment these lines after initial image build and push
-      cache: true
-      cache_tag: latest
 
 - name: release-master
   serial: true
