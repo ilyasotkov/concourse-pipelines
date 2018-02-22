@@ -13,6 +13,7 @@ groups:
   - tag-production
   - build-production
   - release-production
+  - start-next-rc
 
 - name: bump-version
   jobs:
