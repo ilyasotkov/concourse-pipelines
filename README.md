@@ -18,6 +18,7 @@ Example parameters can be found in [params/gitlab-flow-semver.example.yml](/para
 
 ### rails-react-boilerplate-pipeline
 
+#### Set (apply) pipeline
 ```sh
 fly --target ci \
         set-pipeline \
@@ -27,11 +28,15 @@ fly --target ci \
         --var "kube_config=$(cat ../exekube-alpha/config/kube/config)"
 ```
 
+#### Destroy pipeline
+
 ```sh
 fly --target ci \
         destroy-pipeline \
         --pipeline rails-react-boilerplate-pipeline
 ```
+
+#### Promote latest release candidate to production
 
 ```sh
 fly --target ci \
