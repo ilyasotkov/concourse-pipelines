@@ -107,7 +107,6 @@ jobs:
 - name: test-pr
   plan:
   - get: pull-request
-    resource: pull-request
     version: every
     trigger: true
   - put: pull-request
@@ -123,11 +122,11 @@ jobs:
       params:
         path: pull-request
         status: success
-      on_failure:
-        put: pull-request
-        params:
-          path: pull-request
-          status: failure
+    on_failure:
+      put: pull-request
+      params:
+        path: pull-request
+        status: failure
 
 - name: test-master
   plan:
