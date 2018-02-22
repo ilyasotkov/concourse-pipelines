@@ -131,9 +131,10 @@ jobs:
     params:
       build: master
       tag: rc-version/version
+      tag_as_latest: true
+      # uncomment these two lines after initial image build and push
       # cache: false
-      # tag_as_latest: true
-      # uncomment these lines after initial image build and push
+      # cache_tag: latest
 
 - name: release-master
   serial: true
