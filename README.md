@@ -32,3 +32,48 @@ fly --target ci \
         destroy-pipeline \
         --pipeline rails-react-boilerplate-pipeline
 ```
+
+```sh
+fly --target ci \
+        trigger-job \
+        --job rails-react-boilerplate-pipeline/merge-master-to-production \
+        --watch
+```
+
+### SemVer bumping via Fly CLI
+
+#### rc (release candidate) bump (1.0.0-rc.1 -> 1.0.0-rc.2)
+
+```sh
+fly --target ci \
+        trigger-job \
+        --job rails-react-boilerplate-pipeline/rc \
+        --watch
+```
+
+#### Patch bump (1.0.0-rc.5 -> 1.0.1-rc.1)
+
+```sh
+fly --target ci \
+        trigger-job \
+        --job rails-react-boilerplate-pipeline/patch \
+        --watch
+```
+
+#### Minor bump (1.0.0-rc.5 -> 1.1.0-rc.1)
+
+```sh
+fly --target ci \
+        trigger-job \
+        --job rails-react-boilerplate-pipeline/minor \
+        --watch
+```
+
+#### Major bump (1.0.0-rc.5 -> 2.0.0-rc.1)
+
+```sh
+fly --target ci \
+        trigger-job \
+        --job rails-react-boilerplate-pipeline/major \
+        --watch
+```
