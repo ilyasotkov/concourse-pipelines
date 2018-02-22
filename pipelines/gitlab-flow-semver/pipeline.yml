@@ -266,6 +266,24 @@ jobs:
       - key: image.repository
         value: ((docker_registry.uri))
 
+- name: start-next-rc
+  serial: true
+  serial_groups: [ update-version ]
+  plan:
+    - get: final-version
+      passed: [ tag-production ]
+      trigger: true
+      params:
+        bump: patch
+    # This initializes rc-verison with version
+    # of the form 'x.y.z' temporalily.
+    # However, we can gurantee that tagged versions on master branch
+    # will be of the form 'x.y.z-rc.n' because version-master always
+    # bump with {pre: rc}.
+    - put: rc-version
+      params:
+        file: final-version/version
+
 # ------------------------------------------------------------------------------
 # SemVer version bumps. Must be triggered manually!
 # ------------------------------------------------------------------------------
