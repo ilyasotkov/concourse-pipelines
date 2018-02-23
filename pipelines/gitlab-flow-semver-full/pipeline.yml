@@ -6,6 +6,7 @@ groups:
 - name: master
   jobs:
   - test-master
+  - integrate-master
   - version-master
   - tag-master
   - build-master
@@ -153,7 +154,7 @@ jobs:
   plan:
   - aggregate:
     - get: repo-master
-      passed: [ test-master ]
+      passed: [ integrate-master ]
       trigger: true
     - get: rc-version
   - put: rc-version
