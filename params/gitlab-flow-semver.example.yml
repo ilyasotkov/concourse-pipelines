@@ -21,12 +21,12 @@ git_repo:
 
 # release values and release name are paths to files in the app git repo
 master_release:
-  name: config/helm/master-release.txt
-  values: config/helm/master-values.yaml
+  name: ci/helm-release/master-release.txt
+  values: ci/helm-release/master-values.yaml
 
 production_release:
-  name: config/helm/production-release.txt
-  values: config/helm/production-values.yaml
+  name: ci/helm-release/production-release.txt
+  values: ci/helm-release/production-values.yaml
 
 docker_registry:
   uri: registry.swarm.pw:443/rails-react-boilerplate
