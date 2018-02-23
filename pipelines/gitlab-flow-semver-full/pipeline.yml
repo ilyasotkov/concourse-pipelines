@@ -136,6 +136,17 @@ jobs:
     file: repo-master/ci/tasks/unit.yml
     input_mapping: { repo: repo-master }
 
+- name: integrate-master
+  serial: true
+  plan:
+  - aggregate:
+    - get: repo-master
+      trigger: true
+      passed: [ test-master ]
+  - task: integration-test
+    file: repo-master/ci/tasks/integration.yml
+    input_mapping: { repo: repo-master }
+
 - name: version-master
   serial: true
   serial_groups: [ update-version ]
