@@ -1,0 +1,65 @@
+# all secret values are invalid and shown for demonstration purposes only
+
+git_repo:
+  name: ilyasotkov/rails-react-boilerplate
+  uri: git@github.com:ilyasotkov/rails-react-boilerplate.git
+  access_token: 0565d48536e447d8851e82ff855b9d3f1160548d
+  private_key: |
+    -----BEGIN RSA PRIVATE KEY-----
+    MIICXAIBAAKBgQC0Tp3p5Mox35XV1npSEEvXyTsHPg8HMJsU75Cc4SgFad28lmml
+    CJsE7Ri46/5yeSmICY67x9J4rMABBxarliuK4QOn4EUcRIcPBKZOpD2c8FFFzIWq
+    QWLo2xCf1JhJDDrGhjosnI/b30tYJyU6tE3IbWLfH07Re7yYva93PcxISQIDAQAB
+    AoGANJNwDJHAO8a8hDwkMuW5l9R/t97qtuf/cJ1ih7xH1TxHggRCDfNycH9KZDG8
+    YljeOWLAEhV0U+fbnPEaNTJ2w2uwwYfNqhfJv8MlciMGVIYNU47TmA7Fk7dxZJ/+
+    JzemjSLRXf9Xu85m7WM2qE7stixOmbSzl0bfErOQLmCMngECQQD4wL1iojSQhhCF
+    yIgcg4xzXfx+FkeO/PGzJRsGYKyuLPomgQ5DBhxjeywNIZuWkbK8t2y26VNVzJzA
+    qrL6Ch0pAkEAuY9kOi8p97ygVelb/3SEjAlQl4JJ/VB4tam3UTGzRwQCNUAq2iva
+    P05ybe1IgJx7YT9CdYHdtcDqguNAFrUWIQJAP9qCAuquYZb4cM8cGW2vRQIQSXGA
+    pvTJOnpA6K8yRHepMu8X8R6FdQfuM+S3orv9zLGtB3r3eGPQrShkTwj/mQJAUlkM
+    RbYAjeyryvSQ20E+QVcw6MvtQfmgWB5FOEcyJGXnBPLBEak8ZbPOnHIdJtZK+tE0
+    ESnc1ngSmpt3KZybgQJBAMqRN2WJ3L/Buz6Hylodnyd0J+Z9/dWvXVpWV5wQG5BS
+    a18BEhX2iY7Udt08nKtuifJRDMq4sq97jgkDsBmR+E4=
+    -----END RSA PRIVATE KEY-----
+
+# release values and release name are paths to files in the app git repo
+master_release:
+  name: ci/helm-release/master-release.txt
+  values: ci/helm-release/master-values.yaml
+
+production_release:
+  name: ci/helm-release/production-release.txt
+  values: ci/helm-release/production-values.yaml
+
+docker_registry:
+  uri: registry.swarm.pw:443/rails-react-boilerplate
+  username: docker-admin
+  password: GzJRsGYKyuLPomgQ5DB
+
+chart_repo:
+  name: private
+  uri: charts.swarm.pw
+  username: helm-admin
+  password: GzJRsGYKyuLPomgQ5DB
+  chart: rails-app
+
+kube_config: |
+  apiVersion: v1
+  clusters:
+  - cluster:
+      certificate-authority: fake-ca-file
+      server: https://1.2.3.4
+    name: development
+  contexts:
+  - context:
+      cluster: development
+      namespace: frontend
+      user: developer
+    name: dev-frontend
+  current-context: dev-frontend
+  kind: Config
+  preferences: {}
+  users:
+  - name: developer
+    user:
+      client-certificate: fake-cert-file
+      client-key: fake-key-file
