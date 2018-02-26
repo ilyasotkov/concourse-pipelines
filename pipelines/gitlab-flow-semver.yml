@@ -38,14 +38,15 @@ resource_types:
   type: docker-image
   source:
     repository: ilyasotkov/concourse-helm-resource
+    tag: gcloud
 
 resources:
 - name: pull-request
   type: pull-request
   source:
-    repo: ((git_repo.name))
-    access_token: ((git_repo.access_token))
-    private_key: ((git_repo.private_key))
+    repo: ((git-repo-name))
+    access_token: ((git-repo-access-token))
+    private_key: ((git-repo-private-key))
     every: true
 
 - name: concource-pipelines-repo
@@ -57,23 +58,23 @@ resources:
 - name: repo-master
   type: git
   source:
-    uri: ((git_repo.uri))
-    private_key: ((git_repo.private_key))
+    uri: ((git-repo-uri))
+    private_key: ((git-repo-private-key))
     branch: master
 
 - name: repo-production
   type: git
   source:
-    uri: ((git_repo.uri))
-    private_key: ((git_repo.private_key))
+    uri: ((git-repo-uri))
+    private_key: ((git-repo-private-key))
     branch: production
 
 - name: rc-version
   type: semver
   source:
     driver: git
-    uri: ((git_repo.uri))
-    private_key: ((git_repo.private_key))
+    uri: ((git-repo-uri))
+    private_key: ((git-repo-private-key))
     branch: rc-version
     file: version
 
@@ -81,25 +82,28 @@ resources:
   type: semver
   source:
     driver: git
-    uri: ((git_repo.uri))
-    private_key: ((git_repo.private_key))
+    uri: ((git-repo-uri))
+    private_key: ((git-repo-private-key))
     branch: final-version
     file: version
 
 - name: docker-image
   type: docker-image
   source:
-    repository: ((docker_registry.uri))
-    username: ((docker_registry.username))
-    password: ((docker_registry.password))
+    repository: ((docker-registry-uri))
+    username: ((docker-registry-username))
+    password: ((docker-registry-password))
 
 - name: helm-release
   type: helm
   source:
-    cluster_config: ((kube_config))
+    gcloud_auth: ((gcloud-auth))
+    gcloud_project: ((gcloud-project))
+    gcloud_zone: ((gcloud-zone))
+    gcloud_cluster: ((gcloud-cluster))
     repos:
     - name: private
-      url: https://((chart_repo.username)):((chart_repo.password))@((chart_repo.uri))
+      url: https://((chart-repo-username)):((chart-repo-password))@((chart-repo-uri))
 
 jobs:
 # ------------------------------------------------------------------------------
@@ -190,8 +194,8 @@ jobs:
       tag: rc-version/version
       tag_as_latest: true
       # uncomment these two lines after initial image build and push
-      # cache: true
-      # cache_tag: latest
+      cache: true
+      cache_tag: latest
 
 - name: release-master
   serial: true
@@ -204,16 +208,16 @@ jobs:
     - get: rc-version
   - put: helm-release
     params:
-      chart: private/((chart_repo.chart))
-      release: repo-master/((master_release.name))
-      values: repo-master/((master_release.values))
+      chart: private/((chart-repo-chart))
+      release: repo-master/((master-release-name))
+      values: repo-master/((master-release-values))
       replace: true
       devel: true
       recreate_pods: false
       wait_until_ready: 500
       override_values:
       - key: image.repository
-        value: ((docker_registry.uri))
+        value: ((docker-registry-uri))
       - key: image.pullSecret
         value: registry-dockercfg
       - key: image.tag
@@ -301,9 +305,9 @@ jobs:
     - get: final-version
   - put: helm-release
     params:
-      chart: private/((chart_repo.chart))
-      release: repo-production/((production_release.name))
-      values: repo-production/((production_release.values))
+      chart: private/((chart-repo-chart))
+      release: repo-production/((production-release-name))
+      values: repo-production/((production-release-values))
       replace: true
       devel: true
       recreate_pods: false
@@ -314,7 +318,7 @@ jobs:
       - key: image.tag
         path: final-version/version
       - key: image.repository
-        value: ((docker_registry.uri))
+        value: ((docker-registry-uri))
 
 - name: start-next-rc
   serial: true

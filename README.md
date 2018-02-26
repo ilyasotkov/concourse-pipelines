@@ -16,91 +16,42 @@ Example parameters can be found in [params/gitlab-flow-semver.example.yml](/para
 
 ### Add pipelines via Fly CLI
 
-### rails-react-boilerplate-pipeline
+Initialize GitLab Flow:
 
-#### Set (apply) pipeline
+```bash
+#!/bin/bash
+set -ex
+
+branches=("rc-version" "final-version")
+inital_version="0.1.0"
+
+git init
+git add .
+git commit -m "Initial commit"
+
+for branch in "${branches[@]}"; do
+    git checkout --orphan $branch
+    git rm --cached -r .
+    cat <<EOF > .gitignore
+*
+!.gitignore
+!version
+EOF
+
+    echo "$inital_version" > version
+    git add .
+    git commit -m "Add initial $branch file"
+    git checkout master
+done
+```
+
+### Add pipeline to Concourse server
 
 ```sh
 fly --target ci \
         set-pipeline \
         --pipeline rails-react-boilerplate-pipeline \
-        --config pipelines/gitlab-flow-semver/pipeline.yml \
+        --config pipelines/gitlab-flow-semver.yml \
         --load-vars-from params/rails-react-boilerplate.yml \
-        --var "kube_config=$(cat ../exekube-alpha/config/kube/config)"
-```
-
-#### Destroy pipeline
-
-```sh
-fly --target ci \
-        destroy-pipeline \
-        --pipeline rails-react-boilerplate-pipeline
-```
-
-#### Promote latest release candidate to production
-
-```sh
-fly --target ci \
-        trigger-job \
-        --job rails-react-boilerplate-pipeline/merge-master-to-production \
-        --watch
-```
-
-### SemVer bumping via Fly CLI
-
-#### rc (release candidate) bump (1.0.0-rc.1 -> 1.0.0-rc.2)
-
-```sh
-fly --target ci \
-        trigger-job \
-        --job rails-react-boilerplate-pipeline/rc \
-        --watch
-```
-
-#### Patch bump (1.0.0-rc.5 -> 1.0.1-rc.1)
-
-```sh
-fly --target ci \
-        trigger-job \
-        --job rails-react-boilerplate-pipeline/patch \
-        --watch
-```
-
-#### Minor bump (1.0.0-rc.5 -> 1.1.0-rc.1)
-
-```sh
-fly --target ci \
-        trigger-job \
-        --job rails-react-boilerplate-pipeline/minor \
-        --watch
-```
-
-#### Major bump (1.0.0-rc.5 -> 2.0.0-rc.1)
-
-```sh
-fly --target ci \
-        trigger-job \
-        --job rails-react-boilerplate-pipeline/major \
-        --watch
-```
-
-### rails-react-boilerplate-pipeline-full
-
-#### Set (apply) pipeline
-
-```sh
-fly --target ci \
-        set-pipeline \
-        --pipeline rails-react-boilerplate-pipeline-full \
-        --config pipelines/gitlab-flow-semver-full/pipeline.yml \
-        --load-vars-from params/rails-react-boilerplate-full.yml \
-        --var "kube_config=$(cat ../exekube-alpha/config/kube/config)"
-```
-
-#### Destroy pipeline
-
-```sh
-fly --target ci \
-        destroy-pipeline \
-        --pipeline rails-react-boilerplate-pipeline-full
+        --var "gcloud-auth=$(cat ../exekube-alpha/live/prod/owner-key.json)"
 ```
