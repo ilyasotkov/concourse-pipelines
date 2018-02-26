@@ -1,8 +1,4 @@
 groups:
-- name: pull-request
-  jobs:
-  - test-pr
-
 - name: master
   jobs:
   - test-master
@@ -20,6 +16,10 @@ groups:
   - build-production
   - release-production
   - start-next-rc
+
+- name: pull-request
+  jobs:
+  - test-pr
 
 - name: bump-version
   jobs:

@@ -14,9 +14,9 @@ Read the official introduction to GitLab Flow: <https://about.gitlab.com/2014/09
 
 Example parameters can be found in [params/gitlab-flow-semver.example.yml](/params/gitlab-flow-semver.example.yml)
 
-### Add pipelines via Fly CLI
+You can also use Kubernetes Secrets as the credential manager for Concourse: [params/kubernetes.example](/params/kubernetes.example)
 
-Initialize GitLab Flow:
+### Initialize GitLab Flow in an application repo
 
 ```bash
 #!/bin/bash
@@ -47,15 +47,32 @@ done
 
 ### Add pipeline to Concourse server
 
+#### forms-app pipeline
+
 ```sh
 fly --target ci \
         set-pipeline \
-        --pipeline forms-app \
-        --config pipelines/gitlab-flow-semver.yml
+        --config pipelines/gitlab-flow-semver.yml \
+        --pipeline forms-app
 ```
 
 ```sh
 fly --target ci \
         destroy-pipeline \
-        --pipeline forms-app \
+        --pipeline forms-app
+```
+
+#### rails-react-boilerplate pipeline
+
+```sh
+fly --target ci \
+        set-pipeline \
+        --config pipelines/gitlab-flow-semver.yml \
+        --pipeline rails-react-boilerplate
+```
+
+```sh
+fly --target ci \
+        destroy-pipeline \
+        --pipeline rails-react-boilerplate
 ```
