@@ -50,8 +50,12 @@ done
 ```sh
 fly --target ci \
         set-pipeline \
-        --pipeline rails-react-boilerplate-pipeline \
-        --config pipelines/gitlab-flow-semver.yml \
-        --load-vars-from params/rails-react-boilerplate.yml \
-        --var "gcloud-auth=$(cat ../exekube-alpha/live/prod/owner-key.json)"
+        --pipeline forms-app \
+        --config pipelines/gitlab-flow-semver.yml
+```
+
+```sh
+fly --target ci \
+        destroy-pipeline \
+        --pipeline forms-app \
 ```

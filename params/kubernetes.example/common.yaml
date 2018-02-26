@@ -1,0 +1,45 @@
+# all secret values are invalid and shown for demonstration purposes only
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gcloud
+  namespace: concourse-main
+type: Opaque
+stringData:
+  project: my-project-696969
+  zone: europe-west1-d
+  cluster: k8s-cluster
+  auth: |
+    {
+    "type": "service_account",
+    "project_id": "XXX",
+    "private_key_id": "XXX",
+    "private_key": "XXX",
+    "client_email": "XXX",
+    "client_id": "XXX",
+    "auth_uri": "XXX",
+    "token_uri": "XXX",
+    "auth_provider_x509_cert_url": "XXX",
+    "client_x509_cert_url": "XXX"
+    }
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: master-release
+  namespace: concourse-main
+type: Opaque
+stringData:
+  name: ci/helm-release/master-release.txt
+  values: ci/helm-release/master-values.yaml
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: production-release
+  namespace: concourse-main
+type: Opaque
+stringData:
+  name: ci/helm-release/production-release.txt
+  values: ci/helm-release/production-values.yaml
