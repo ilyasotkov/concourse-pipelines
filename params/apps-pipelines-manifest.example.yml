@@ -1,0 +1,7 @@
+pipelines:
+- name: forms-app
+  team: main
+  config_file: generic-pipelines-repo/pipelines/gitlab-flow-semver.yml
+- name: rails-react-boilerplate
+  team: main
+  config_file: generic-pipelines-repo/pipelines/gitlab-flow-semver.yml

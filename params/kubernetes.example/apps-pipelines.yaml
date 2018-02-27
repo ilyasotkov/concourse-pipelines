@@ -10,3 +10,5 @@ stringData:
   target: https://ci.example.com
   username: concourse-username
   password: cfqGkRZsdBg196F5gRc6HcP5I4hlNOboBGlfEjpynDA=
+  pipelines-repo-uri: https://github.com/ilyasotkov/concourse-pipelines.git
+  pipelines-file-path: params/apps-pipelines-manifest.example.yml

@@ -5,10 +5,16 @@ resource_types:
     repository: concourse/concourse-pipeline-resource
 
 resources:
-- name: concourse-pipelines-repo
+- name: generic-pipelines-repo
   type: git
   source:
     uri: https://github.com/ilyasotkov/concourse-pipelines.git
+    branch: master
+
+- name: pipelines-manifest-repo
+  type: git
+  source:
+    uri: ((main.pipelines-repo-uri))
     branch: master
 
 - name: pipelines-config
@@ -24,14 +30,9 @@ resources:
 jobs:
 - name: set-apps-pipelines
   plan:
-  - get: concourse-pipelines-repo
+  - get: generic-pipelines-repo
+  - get: pipelines-manifest-repo
     trigger: true
   - put: pipelines-config
     params:
-      pipelines:
-      - name: forms-app
-        team: main
-        config_file: concourse-pipelines-repo/pipelines/gitlab-flow-semver.yml
-      - name: rails-react-boilerplate
-        team: main
-        config_file: concourse-pipelines-repo/pipelines/gitlab-flow-semver.yml
+      pipelines_file: ((main.pipelines-file-path))
