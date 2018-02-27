@@ -14,18 +14,18 @@ resources:
 - name: pipelines-manifest-repo
   type: git
   source:
-    uri: ((main.pipelines-repo-uri))
+    uri: ((config.pipelines-repo-uri))
     branch: master
 
 - name: pipelines-config
   type: concourse-pipeline
   source:
-    target: ((main.target))
+    target: ((config.target))
     insecure: "false"
     teams:
     - name: main
-      username: ((main.username))
-      password: ((main.password))
+      username: ((config.username))
+      password: ((config.password))
 
 jobs:
 - name: set-apps-pipelines
@@ -35,4 +35,4 @@ jobs:
     trigger: true
   - put: pipelines-config
     params:
-      pipelines_file: ((main.pipelines-file-path))
+      pipelines_file: ((config.pipelines-file-path))
