@@ -1,0 +1,36 @@
+resource_types:
+- name: concourse-pipeline
+  type: docker-image
+  source:
+    repository: concourse/concourse-pipeline-resource
+
+resources:
+- name: concource-pipelines-repo
+  type: git
+  source:
+    uri: https://github.com/ilyasotkov/concourse-pipelines.git
+    branch: master
+
+- name: pipelines-config
+  type: concourse-pipeline
+  source:
+    target: ((main.target))
+    insecure: "false"
+    teams:
+    - name: main
+      username: ((main.username))
+      password: ((main.password))
+
+jobs:
+- name: set-apps-pipelines
+  plan:
+  - get: concourse-pipelines-repo
+  - put: pipelines-config
+    params:
+      pipelines:
+      - name: forms-app
+        team: main
+        config_file: concourse-pipelines-repo/pipelines/gitlab-flow-semver.yml
+      - name: rails-react-boilerplate
+        team: main
+        config_file: concourse-pipelines-repo/pipelines/gitlab-flow-semver.yml

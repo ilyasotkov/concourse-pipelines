@@ -1,0 +1,12 @@
+# all secret values are invalid and shown for demonstration purposes only
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: apps-pipelines.main
+  namespace: concourse-main
+type: Opaque
+stringData:
+  target: https://ci.example.com
+  username: concourse-username
+  password: cfqGkRZsdBg196F5gRc6HcP5I4hlNOboBGlfEjpynDA=

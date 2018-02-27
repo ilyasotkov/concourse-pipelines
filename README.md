@@ -45,7 +45,16 @@ EOF
 done
 ```
 
-### Add pipeline to Concourse server
+### Add pipelines to your Concourse server
+
+#### apps-pipelines pipeline
+
+```sh
+fly --target ci \
+        set-pipeline \
+        --config pipelines/concourse-pipelines.yml \
+        --pipeline apps-pipelines
+```
 
 #### forms-app pipeline
 
