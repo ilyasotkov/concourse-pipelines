@@ -35,4 +35,4 @@ jobs:
     trigger: true
   - put: pipelines-config
     params:
-      pipelines_file: ((config.pipelines-file-path))
+      pipelines_file: pipelines-manifest-repo/((config.pipelines-file-path))
