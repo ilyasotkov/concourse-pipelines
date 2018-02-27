@@ -38,7 +38,6 @@ resource_types:
   type: docker-image
   source:
     repository: ilyasotkov/concourse-helm-resource
-    tag: gcloud
 
 resources:
 - name: pull-request
@@ -94,13 +93,24 @@ resources:
     username: ((docker-registry.username))
     password: ((docker-registry.password))
 
-- name: helm-release
+- name: helm-release-master
   type: helm
   source:
-    gcloud_auth: ((gcloud.auth))
-    gcloud_project: ((gcloud.project))
-    gcloud_zone: ((gcloud.zone))
-    gcloud_cluster: ((gcloud.cluster))
+    gcloud_auth: ((gcloud-master.auth))
+    gcloud_project: ((gcloud-master.project))
+    gcloud_zone: ((gcloud-master.zone))
+    gcloud_cluster: ((gcloud-master.cluster))
+    repos:
+    - name: private
+      url: https://((chart-repo.username)):((chart-repo.password))@((chart-repo.uri))
+
+- name: helm-release-production
+  type: helm
+  source:
+    gcloud_auth: ((gcloud-production.auth))
+    gcloud_project: ((gcloud-production.project))
+    gcloud_zone: ((gcloud-production.zone))
+    gcloud_cluster: ((gcloud-production.cluster))
     repos:
     - name: private
       url: https://((chart-repo.username)):((chart-repo.password))@((chart-repo.uri))
@@ -206,7 +216,7 @@ jobs:
       passed: [ build-master ]
       trigger: true
     - get: rc-version
-  - put: helm-release
+  - put: helm-release-master
     params:
       chart: private/((chart-repo.chart))
       release: repo-master/((master-release.name))
@@ -303,7 +313,7 @@ jobs:
       passed: [ build-production ]
       trigger: true
     - get: final-version
-  - put: helm-release
+  - put: helm-release-production
     params:
       chart: private/((chart-repo.chart))
       release: repo-production/((production-release.name))
