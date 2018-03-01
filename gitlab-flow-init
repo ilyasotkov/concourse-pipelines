@@ -1,0 +1,25 @@
+#!/bin/bash
+set -ex
+
+branches=("rc-version" "final-version")
+inital_version="0.1.0"
+
+git init
+git add .
+git commit -m "Initial commit"
+git branch production
+
+for branch in "${branches[@]}"; do
+    git checkout --orphan $branch
+    git rm --cached -r .
+    cat <<EOF > .gitignore
+*
+!.gitignore
+!version
+EOF
+
+    echo "$inital_version" > version
+    git add .
+    git commit -m "Add initial $branch file"
+    git checkout master
+done
