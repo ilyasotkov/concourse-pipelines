@@ -1,15 +1,15 @@
 # Concourse Pipelines
 
-## GitLab Flow Pipeline with SemVer
+## GitLab Flow Pipeline with SemVer deployed onto a GKE cluster
 
 Read the official introduction to the GitLab Flow workflow: <https://about.gitlab.com/2014/09/29/gitlab-flow/>
 
 ### Features
 
 - Application deployed onto a GKE cluster as a Helm release
-- Automated semantic versioning
-- Manual version bumps: patch, minor, major
 - Two branches: `master` (released to a staging environment) and `production` (released to a production environment)
+- Automated semantic versioning and tagging
+- Ability to manually bump application version: patch, minor, major
 
 ### Example applications
 
@@ -26,16 +26,14 @@ Read more about how Concourse sources values from Kubernetes Secrets: <https://g
 
 ### Initialize GitLab Flow in an application repo
 
-This setup stores the application version number on separate branches:
+Add the [`gitlab-flow-init`](/gitlab-flow-init) script to your `$PATH` and run the script in every new application repository to initialize the branching model.
 
-- The `master` branch version is stored on the `rc-version` branch
-- The `production` branch version is stored on the `final-version` branch
-
-For every new application, you can add the [`gitlab-flow-init`](/gitlab-flow-init) script to your `$PATH` and to initialize the setup.
+- The `master` branch version is stored in the `version` file on the `rc-version` branch of the application repo, and always has the `x.y.z-rc.n` form
+- The `production` branch version is stored on the `final-version` branch and has the `x.y.z` form
 
 ### Add pipelines to your Concourse server
 
-#### apps-pipelines pipeline
+#### Pipeline that manages all other pipelines
 
 The easiest way to create all of your pipelines is to have a pipeline that will set and update all other pipelines:
 
@@ -46,4 +44,4 @@ fly --target ci \
         --pipeline apps-pipelines
 ```
 
-The pipeline will read the Kubernetes Secret that we would create beforehand ([example](https://github.com/ilyasotkov/concourse-pipelines/blob/master/params/kubernetes.example/apps-pipelines.yaml)) and create all application pipelines listed in the [pipeline manifest file](/params/apps-pipelines-manifest.example.yml) for us.
+The pipeline will read the Kubernetes Secret that we would create beforehand ([example](https://github.com/ilyasotkov/concourse-pipelines/blob/master/params/kubernetes.example/apps-pipelines.yaml)) and create all the pipelines listed in the [pipeline manifest file](/params/apps-pipelines-manifest.example.yml) for us.
