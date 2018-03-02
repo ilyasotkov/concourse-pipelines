@@ -38,6 +38,8 @@ stringData:
   pull-secret: registry-dockercfg
   username: registry-admin
   password: 67x9J4rMABBxa
+  cache: "false"
+  cache-tag: latest
 ---
 apiVersion: v1
 kind: Secret

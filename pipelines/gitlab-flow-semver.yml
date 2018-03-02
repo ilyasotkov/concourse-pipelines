@@ -204,8 +204,8 @@ jobs:
       tag: rc-version/version
       tag_as_latest: true
       # uncomment these two lines after initial image build and push
-      # cache: true
-      # cache_tag: latest
+      cache: ((docker-registry.cache))
+      cache_tag: ((docker-registry.cache-tag))
 
 - name: release-master
   serial: true

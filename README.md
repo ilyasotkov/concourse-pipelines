@@ -46,3 +46,12 @@ fly --target ci \
 ```
 
 The pipeline will read the Kubernetes Secret that we would create beforehand ([example](https://github.com/ilyasotkov/concourse-pipelines/blob/master/params/kubernetes.example/apps-pipelines.yaml)) and create all the pipelines listed in the [pipeline manifest file](/params/apps-pipelines-manifest.example.yml) for us.
+
+#### Manually update pipelines
+
+```sh
+fly --target ci \
+        set-pipeline \
+        --config pipelines/gitlab-flow-semver.yml \
+        --pipeline forms-app
+```

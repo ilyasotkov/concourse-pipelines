@@ -25,6 +25,8 @@ docker-registry:
   pull-secret: registry-dockercfg
   username: registry-admin
   password: GzJRsGYKyuLPomgQ5DB
+  cache: "false"
+  cache-tag: latest
 
 chart-repo:
   uri: charts-admin:GzJRsGYKyuLPomgQ5DB@charts.swarm.pw
