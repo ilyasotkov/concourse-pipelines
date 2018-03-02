@@ -1,14 +1,15 @@
 # Concourse Pipelines
 
-## GitLab Flow Pipeline with SemVer deployed onto a GKE cluster
+## GitLab Flow branching / SemVer versioning / Kubernetes release pipeline
 
 Read the official introduction to the GitLab Flow workflow: <https://about.gitlab.com/2014/09/29/gitlab-flow/>
 
 ### Features
 
-- Application deployed onto a GKE cluster as a Helm release
+- Application deployed onto a Kubernetes cluster as a Helm release
 - Two branches: `master` (released to a staging environment) and `production` (released to a production environment)
 - Automated semantic versioning and tagging
+- Ability to include unit and integration tests
 - Ability to manually bump application version: patch, minor, major
 
 ### Example applications

@@ -35,6 +35,7 @@ metadata:
 type: Opaque
 stringData:
   uri: registry.swarm.pw:443/rails-react-boilerplate
+  pull-secret: registry-dockercfg
   username: registry-admin
   password: 67x9J4rMABBxa
 ---

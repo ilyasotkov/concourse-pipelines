@@ -229,7 +229,7 @@ jobs:
       - key: image.repository
         value: ((docker-registry.uri))
       - key: image.pullSecret
-        value: registry-dockercfg
+        value: ((docker-registry.pull-secret))
       - key: image.tag
         path: rc-version/version
 
@@ -324,7 +324,7 @@ jobs:
       wait_until_ready: 500
       override_values:
       - key: image.pullSecret
-        value: registry-dockercfg
+        value: ((docker-registry.pull-secret))
       - key: image.tag
         path: final-version/version
       - key: image.repository
