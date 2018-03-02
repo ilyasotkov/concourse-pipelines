@@ -20,6 +20,16 @@ git-repo:
     a18BEhX2iY7Udt08nKtuifJRDMq4sq97jgkDsBmR+E4=
     -----END RSA PRIVATE KEY-----
 
+docker-registry:
+  uri: registry.swarm.pw:443/forms-app
+  username: registry-admin
+  password: GzJRsGYKyuLPomgQ5DB
+
+chart-repo:
+  uri: charts-admin:GzJRsGYKyuLPomgQ5DB@charts.swarm.pw
+  name: private
+  chart: rails-app
+
 master-release:
   name: ci/helm-release/master-release.txt
   values: ci/helm-release/master-values.yaml
@@ -27,42 +37,6 @@ master-release:
 production-release:
   name: ci/helm-release/production-release.txt
   values: ci/helm-release/production-values.yaml
-
-docker-registry:
-  uri: registry.swarm.pw:443/forms-app
-  username: registry-admin
-  password: GzJRsGYKyuLPomgQ5DB
-
-chart-repo:
-  name: private
-  uri: charts.swarm.pw
-  username: charts-admin
-  password: GzJRsGYKyuLPomgQ5DB
-  chart: rails-app
-
-kubeconfig: |
-  apiVersion: v1
-  clusters:
-  - cluster:
-      certificate-authority: fake-ca-file
-      server: https://1.2.3.4
-    name: development
-  contexts:
-  - context:
-      cluster: development
-      namespace: frontend
-      user: developer
-    name: dev-frontend
-  current-context: dev-frontend
-  kind: Config
-  preferences: {}
-  users:
-  - name: developer
-    user:
-      client-certificate: fake-cert-file
-      client-key: fake-key-file
-
-# OR for GKE clusters on Google Cloud
 
 gcloud-master:
   project: my-project-696969

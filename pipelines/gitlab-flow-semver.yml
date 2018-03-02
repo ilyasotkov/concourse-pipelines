@@ -102,7 +102,7 @@ resources:
     gcloud_cluster: ((gcloud-master.cluster))
     repos:
     - name: private
-      url: https://((chart-repo.username)):((chart-repo.password))@((chart-repo.uri))
+      url: https://((chart-repo.uri))
 
 - name: helm-release-production
   type: helm
@@ -113,7 +113,7 @@ resources:
     gcloud_cluster: ((gcloud-production.cluster))
     repos:
     - name: private
-      url: https://((chart-repo.username)):((chart-repo.password))@((chart-repo.uri))
+      url: https://((chart-repo.uri))
 
 jobs:
 # ------------------------------------------------------------------------------

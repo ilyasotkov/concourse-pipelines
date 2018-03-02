@@ -34,9 +34,9 @@ metadata:
   namespace: concourse-main
 type: Opaque
 stringData:
+  uri: registry.swarm.pw:443/rails-react-boilerplate
   username: registry-admin
   password: 67x9J4rMABBxa
-  uri: registry.swarm.pw:443/rails-react-boilerplate
 ---
 apiVersion: v1
 kind: Secret
@@ -46,7 +46,5 @@ metadata:
 type: Opaque
 stringData:
   name: private
-  uri: charts.swarm.pw
-  username: charts-admin
-  password: 67x9J4rMABBxa
+  uri: charts-admin:67x9J4rMABBxa@charts.swarm.pw
   chart: rails-app
