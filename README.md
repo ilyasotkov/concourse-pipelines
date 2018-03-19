@@ -55,3 +55,9 @@ fly --target ci \
         --config pipelines/gitlab-flow-semver.yml \
         --pipeline forms-app
 ```
+
+```sh
+fly --target ci \
+        destroy-pipeline \
+        --pipeline forms-app
+```
