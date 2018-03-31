@@ -37,7 +37,7 @@ resource_types:
 - name: helm
   type: docker-image
   source:
-    repository: ilyasotkov/concourse-helm-resourse
+    repository: ilyasotkov/concourse-helm-resource
     tag: 1.0.0
 
 resources:
